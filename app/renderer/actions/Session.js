@@ -810,6 +810,7 @@ export function getRunningSessions () {
     const state = getState().session;
     const {server, serverType} = state;
     const serverInfo = server[serverType];
+    const browserstackParams = new URL(window.location).searchParams;
 
     let {hostname, port, path, ssl, username, accessKey} = serverInfo;
 
@@ -819,6 +820,19 @@ export function getRunningSessions () {
       hostname = hostname || DEFAULT_SERVER_HOST;
       port = port || DEFAULT_SERVER_PORT;
       path = path || DEFAULT_SERVER_PATH;
+    }
+
+    if (serverType === ServerTypes.browserstack) {
+      hostname = 'hub-cloud.browserstack.com' ;
+      port = 443;
+      path = '/wd/hub';
+      username = browserstackParams.get('username');
+      accessKey = browserstackParams.get('accessKey');
+      if (!username || !accessKey) {
+        showError(new Error(i18n.t('browserstackCredentialsRequired')));
+        return false;
+      }
+      ssl = true;
     }
 
     if (!hostname || !port || !path) {
