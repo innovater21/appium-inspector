@@ -84,7 +84,7 @@ const MJPEG_PORT_CAP = 'mjpegServerPort';
 // TODO: increase this retry when we get issues
 export const CONN_RETRIES = 0;
 const CONN_TIMEOUT = 5 * 60 * 1000;
-const HEADERS_CONTENT = 'application/json; charset=utf-8';
+const HEADERS_CONTENT ='application/json; charset=utf-8';
 
 // 1 hour default newCommandTimeout
 const NEW_COMMAND_TIMEOUT_SEC = 3600;
@@ -100,8 +100,8 @@ serverTypes.remote = 'remote';
 
 export const ServerTypes = serverTypes;
 
-export const DEFAULT_SERVER_PATH = '/';
-export const DEFAULT_SERVER_HOST = '127.0.0.1';
+export const DEFAULT_SERVER_PATH = '/wd/hub';
+export const DEFAULT_SERVER_HOST = 'hub-cloud.browserstack.com';
 export const DEFAULT_SERVER_PORT = 4723;
 
 const SAUCE_OPTIONS_CAP = 'sauce:options';
@@ -810,6 +810,7 @@ export function getRunningSessions () {
     const state = getState().session;
     const {server, serverType} = state;
     const serverInfo = server[serverType];
+    const browserstackParams = new URL(window.location).searchParams;
 
     let {hostname, port, path, ssl, username, accessKey} = serverInfo;
 
@@ -819,6 +820,19 @@ export function getRunningSessions () {
       hostname = hostname || DEFAULT_SERVER_HOST;
       port = port || DEFAULT_SERVER_PORT;
       path = path || DEFAULT_SERVER_PATH;
+    }
+
+    if (serverType === ServerTypes.browserstack) {
+      hostname = 'hub-cloud.browserstack.com' ;
+      port = 443;
+      path = '/wd/hub';
+      username = browserstackParams.get('username');
+      accessKey = browserstackParams.get('accessKey');
+      if (!username || !accessKey) {
+        showError(new Error(i18n.t('browserstackCredentialsRequired')));
+        return false;
+      }
+      ssl = true;
     }
 
     if (!hostname || !port || !path) {

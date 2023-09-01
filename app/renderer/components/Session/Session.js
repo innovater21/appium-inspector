@@ -10,7 +10,7 @@ import { Tabs, Button, Spin, Badge } from 'antd';
 import AdvancedServerParams from './AdvancedServerParams';
 import SessionStyles from './Session.css';
 import CloudProviders from './CloudProviders';
-import CloudProviderSelector from './CloudProviderSelector';
+// import CloudProviderSelector from './CloudProviderSelector';
 import { LinkOutlined } from '@ant-design/icons';
 import { BUTTON } from '../AntdTypes';
 
@@ -43,7 +43,7 @@ const Session = (props) => {
 
   useEffect(() => {
     const { setLocalServerParams, getSavedSessions, setSavedServerParams, setStateFromAppiumFile,
-            setVisibleProviders, getRunningSessions, bindWindowClose, initFromQueryString, saveFile } = props;
+            getRunningSessions, bindWindowClose, initFromQueryString, saveFile } = props;
     (async () => {
       try {
         bindWindowClose();
@@ -51,7 +51,7 @@ const Session = (props) => {
         await getSavedSessions();
         await setSavedServerParams();
         await setLocalServerParams();
-        await setVisibleProviders();
+        // await setVisibleProviders();
         getRunningSessions();
         initFromQueryString(loadNewSession);
         await setStateFromAppiumFile();
@@ -68,15 +68,15 @@ const Session = (props) => {
       <div className={SessionStyles.sessionContainer}>
         <div id='serverTypeTabs' className={SessionStyles.serverTab}>
           <Tabs activeKey={serverType} onChange={(tab) => handleSelectServerTab(tab)} className={SessionStyles.serverTabs} items={[
-            {label: t('Appium Server'), key: 'remote', children: <ServerTabCustom {...props} />},
+            // {label: t('Appium Server'), key: 'remote', children: <ServerTabCustom {...props} />},
             ..._(visibleProviders).map((providerName) => {
               const provider = CloudProviders[providerName];
               if (!provider) {
                 return true;
               }
               return {label: <div>{provider.tabhead()}</div>, key: providerName, children: provider.tab(props)};
-            }),
-            {label: <span className='addCloudProviderTab'>{ t('Select Cloud Providers') }</span>, key: ADD_CLOUD_PROVIDER}
+            })
+            // {label: <span className='addCloudProviderTab'>{ t('Select Cloud Providers') }</span>, key: ADD_CLOUD_PROVIDER}
           ]}/>
           <AdvancedServerParams {...props} />
         </div>
@@ -114,7 +114,7 @@ const Session = (props) => {
 
       </div>
     </Spin>,
-    <CloudProviderSelector {...props} key='CloudProviderSelector' />
+    // <CloudProviderSelector {...props} key='CloudProviderSelector' />
   ];
 };
 
